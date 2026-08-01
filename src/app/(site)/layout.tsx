@@ -3,7 +3,7 @@ import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { fontVariables } from "@/lib/fonts";
 import { getCategories, getSettings } from "@/db/queries";
-import "./globals.css";
+import "../globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://aybutik86.vercel.app"),

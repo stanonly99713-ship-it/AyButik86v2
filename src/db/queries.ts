@@ -104,6 +104,20 @@ export async function getAllProducts(): Promise<Product[]> {
   return rows.map(toProduct);
 }
 
+/** Для админки — включая неопубликованные черновики, в отличие от витринных функций выше. */
+export async function getAdminProducts(): Promise<Product[]> {
+  const rows = await db.query.products.findMany({
+    with: { images: true },
+    orderBy: [desc(products.updatedAt)],
+  });
+  return rows.map(toProduct);
+}
+
+export async function getAdminProductById(id: string): Promise<Product | undefined> {
+  const row = await db.query.products.findFirst({ where: eq(products.id, id), with: { images: true } });
+  return row ? toProduct(row) : undefined;
+}
+
 export type CatalogSort = "new" | "price_asc" | "price_desc" | "discount";
 
 export type CatalogFilters = {
