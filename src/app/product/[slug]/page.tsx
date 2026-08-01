@@ -5,17 +5,18 @@ import { ProductGallery } from "@/components/site/ProductGallery";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { StickyWhatsAppButton } from "@/components/site/StickyWhatsAppButton";
 import { formatPrice, discountPercent } from "@/lib/format";
-import { getAllProducts, getCategories, getProductBySlug, getRelatedProducts, getSettings } from "@/lib/queries";
+import { getAllProducts, getCategories, getProductBySlug, getRelatedProducts, getSettings } from "@/db/queries";
 
 type Params = { slug: string };
 
-export function generateStaticParams(): Params[] {
-  return getAllProducts().map((p) => ({ slug: p.slug }));
+export async function generateStaticParams(): Promise<Params[]> {
+  const allProducts = await getAllProducts();
+  return allProducts.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) return {};
   return {
     title: product.name,
@@ -26,13 +27,15 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 
 export default async function ProductPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const categories = getCategories();
+  const [categories, related, settings] = await Promise.all([
+    getCategories(),
+    getRelatedProducts(product),
+    getSettings(),
+  ]);
   const category = categories.find((c) => c.id === product.categoryId);
-  const related = getRelatedProducts(product);
-  const settings = getSettings();
   const discount = product.oldPrice ? discountPercent(product.oldPrice, product.price) : 0;
 
   return (

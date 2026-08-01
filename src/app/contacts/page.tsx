@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { PhoneIcon, WhatsAppIcon } from "@/components/icons";
-import { getSettings } from "@/lib/queries";
+import { getSettings } from "@/db/queries";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 
 export const metadata: Metadata = { title: "Контакты" };
 
-export default function ContactsPage() {
-  const settings = getSettings();
+export default async function ContactsPage() {
+  const settings = await getSettings();
   const telHref = `tel:${settings.phone.replace(/[^\d+]/g, "")}`;
 
   return (

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ProductCard } from "@/components/site/ProductCard";
-import { getCategories, getSettings, searchProducts, type CatalogSort } from "@/lib/queries";
+import { getCategories, getSettings, searchProducts, type CatalogSort } from "@/db/queries";
 
 export const metadata: Metadata = { title: "Каталог" };
 
@@ -29,11 +29,10 @@ function buildHref(current: SearchParams, patch: Partial<SearchParams>) {
 
 export default async function CatalogPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const params = await searchParams;
-  const categories = getCategories();
-  const settings = getSettings();
+  const [categories, settings] = await Promise.all([getCategories(), getSettings()]);
   const activeCategory = categories.find((c) => c.slug === params.cat);
 
-  const products = searchProducts({
+  const products = await searchProducts({
     q: params.q,
     category: params.cat,
     sort: (params.sort as CatalogSort) ?? "new",

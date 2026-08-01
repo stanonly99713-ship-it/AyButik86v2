@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { fontVariables } from "@/lib/fonts";
-import { getCategories, getSettings } from "@/lib/queries";
+import { getCategories, getSettings } from "@/db/queries";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,9 +20,9 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const categories = getCategories();
-  const settings = getSettings();
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const categories = await getCategories();
+  const settings = await getSettings();
 
   return (
     <html lang="ru" className={`${fontVariables} h-full antialiased`}>

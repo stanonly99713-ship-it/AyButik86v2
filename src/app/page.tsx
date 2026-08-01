@@ -10,14 +10,16 @@ import {
   getNewArrivals,
   getSaleProducts,
   getSettings,
-} from "@/lib/queries";
+} from "@/db/queries";
 
-export default function HomePage() {
-  const categories = getCategories();
-  const heroSlides = getHeroSlides();
-  const newArrivals = getNewArrivals(8);
-  const saleProducts = getSaleProducts(8);
-  const settings = getSettings();
+export default async function HomePage() {
+  const [categories, heroSlides, newArrivals, saleProducts, settings] = await Promise.all([
+    getCategories(),
+    getHeroSlides(),
+    getNewArrivals(8),
+    getSaleProducts(8),
+    getSettings(),
+  ]);
 
   const categoryName = (id: string) => categories.find((c) => c.id === id)?.name;
 
