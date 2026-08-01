@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { updateProduct, type ProductFormState } from "@/actions/products";
+import { PhotoUploader } from "@/components/admin/PhotoUploader";
 import { SpecsEditor } from "@/components/admin/SpecsEditor";
 import { isDraftSlug } from "@/lib/slug";
 import type { Category, Product } from "@/lib/types";
@@ -15,9 +16,7 @@ export function ProductForm({ product, categories }: { product: Product; categor
     <form action={formAction} className="pb-28">
       <input type="hidden" name="id" value={product.id} />
 
-      <div className="rounded-lg border border-dashed border-line px-4 py-6 text-center text-sm text-muted">
-        Фото товара — на следующем этапе. Пока можно заполнить название, цену и описание.
-      </div>
+      <PhotoUploader productId={product.id} images={product.images} />
 
       <label className="mt-4 block text-sm text-muted">
         Название

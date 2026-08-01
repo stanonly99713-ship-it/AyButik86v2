@@ -2,18 +2,20 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createSessionToken, SESSION_COOKIE, SESSION_MAX_AGE, shouldRenew, verifySessionToken } from "@/lib/auth";
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*"],
 };
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isLoginPage = pathname === "/admin/login";
+  const isApiRoute = pathname.startsWith("/api/admin");
 
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const payload = token ? await verifySessionToken(token) : null;
 
   if (!payload) {
     if (isLoginPage) return NextResponse.next();
+    if (isApiRoute) return NextResponse.json({ error: "Не авторизовано" }, { status: 401 });
     const loginUrl = new URL("/admin/login", request.url);
     loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);

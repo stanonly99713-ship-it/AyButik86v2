@@ -1,10 +1,11 @@
 "use server";
 
+import { del } from "@vercel/blob";
 import { and, asc, eq, ne } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { categories, products } from "@/db/schema";
+import { categories, productImages, products } from "@/db/schema";
 import { draftSlug, isDraftSlug, slugify } from "@/lib/slug";
 
 async function ensureUniqueSlug(base: string, excludeId?: string): Promise<string> {
@@ -121,6 +122,15 @@ export async function setPublished(id: string, isPublished: boolean) {
 
 export async function deleteProduct(id: string) {
   const row = await db.query.products.findFirst({ where: eq(products.id, id) });
+  const images = await db.query.productImages.findMany({ where: eq(productImages.productId, id) });
+
+  // Блобы удаляем до строки товара — иначе 1 ГБ бесплатного места на Blob
+  // со временем забьётся сиротами, до которых уже никак не добраться.
+  const pathnames = images.flatMap((img) => [img.pathname, img.thumbPathname]);
+  if (pathnames.length > 0) {
+    await del(pathnames).catch(() => {});
+  }
+
   await db.delete(products).where(eq(products.id, id));
   revalidateStorefront(row?.slug);
   revalidatePath("/admin/products");
