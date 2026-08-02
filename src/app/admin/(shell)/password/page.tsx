@@ -11,7 +11,7 @@ export default function ChangePasswordPage() {
   const [state, formAction, pending] = useActionState(changePassword, initialState);
 
   return (
-    <div className="px-4 py-4">
+    <div className="px-4 py-4 pb-24">
       <div className="mb-4 flex items-center gap-2">
         <Link href="/admin/products" aria-label="Назад" className="-ml-2 flex h-11 w-11 items-center justify-center">
           <ChevronLeftIcon className="h-5 w-5 text-cream" />

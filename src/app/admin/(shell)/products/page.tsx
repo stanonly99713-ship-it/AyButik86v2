@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { logout } from "@/actions/auth";
 import { createDraftProduct } from "@/actions/products";
 import { ProductActionsMenu } from "@/components/admin/ProductActionsMenu";
 import { formatPrice } from "@/lib/format";
@@ -27,22 +26,8 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
   }
 
   return (
-    <div className="pb-28">
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line bg-ink/95 px-4 backdrop-blur">
-        <span className="font-heading text-lg text-cream">AyButik86 · Админ</span>
-        <div className="flex items-center gap-4">
-          <Link href="/admin/password" className="text-sm text-muted">
-            Пароль
-          </Link>
-          <form action={logout}>
-            <button type="submit" className="text-sm text-muted">
-              Выйти
-            </button>
-          </form>
-        </div>
-      </header>
-
-      <div className="px-4 py-4">
+    <div>
+      <div className="px-4 py-4 pb-24">
         <h1 className="mb-3 text-xl text-cream">Товары</h1>
 
         <form className="mb-3 flex gap-2" action="/admin/products">
@@ -120,7 +105,8 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
         <button
           type="submit"
           aria-label="Добавить товар"
-          className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-gold to-gold-light text-2xl text-ink shadow-lg"
+          className="fixed right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-gold to-gold-light text-2xl text-ink shadow-lg"
+          style={{ bottom: "calc(4.5rem + env(safe-area-inset-bottom))" }}
         >
           +
         </button>

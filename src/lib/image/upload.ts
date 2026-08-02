@@ -44,3 +44,19 @@ export async function uploadPreparedPair(
     thumbPathname: thumb.pathname,
   };
 }
+
+export type UploadedSingle = { url: string; pathname: string };
+
+/** Для баннеров/слайдов, где нужен только один размер, без отдельной миниатюры */
+export async function uploadSingle(
+  pathnamePrefix: string,
+  file: Blob,
+  onProgress?: (percent: number) => void,
+): Promise<UploadedSingle> {
+  const result = await upload(`${pathnamePrefix}.webp`, file, {
+    access: "public",
+    handleUploadUrl: "/api/admin/blob-upload",
+    onUploadProgress: (e) => onProgress?.(e.percentage),
+  });
+  return { url: result.url, pathname: result.pathname };
+}

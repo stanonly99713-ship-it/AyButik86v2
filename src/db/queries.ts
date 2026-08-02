@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gt, ilike, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, ilike, or, sql } from "drizzle-orm";
 import { db } from "./index";
 import { categories, heroSlides, productImages, products, settings } from "./schema";
 import type { Category, HeroSlide, Product, Settings } from "@/lib/types";
@@ -34,6 +34,16 @@ function toProduct(row: typeof products.$inferSelect & { images: (typeof product
 export async function getCategories(): Promise<Category[]> {
   const rows = await db.select().from(categories).orderBy(asc(categories.sortOrder));
   return rows;
+}
+
+export async function getCategoriesWithProductCounts(): Promise<(Category & { productCount: number })[]> {
+  const cats = await getCategories();
+  const counts = await db
+    .select({ categoryId: products.categoryId, value: count() })
+    .from(products)
+    .groupBy(products.categoryId);
+  const countByCategory = new Map(counts.map((c) => [c.categoryId, c.value]));
+  return cats.map((c) => ({ ...c, productCount: countByCategory.get(c.id) ?? 0 }));
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | undefined> {
@@ -187,6 +197,11 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
     .where(eq(heroSlides.isActive, true))
     .orderBy(asc(heroSlides.sortOrder));
   return rows;
+}
+
+/** Для админки — включая неактивные слайды и служебный pathname (нужен для удаления из Blob) */
+export async function getAdminHeroSlides() {
+  return db.select().from(heroSlides).orderBy(asc(heroSlides.sortOrder));
 }
 
 const SETTINGS_FALLBACK: Settings = {
