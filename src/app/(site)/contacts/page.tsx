@@ -6,6 +6,9 @@ import { buildWhatsAppLink } from "@/lib/whatsapp";
 
 export const metadata: Metadata = { title: "Контакты" };
 
+// См. комментарий в src/app/(site)/page.tsx — та же логика.
+export const revalidate = 60;
+
 export default async function ContactsPage() {
   const settings = await getSettings();
   const telHref = `tel:${settings.phone.replace(/[^\d+]/g, "")}`;

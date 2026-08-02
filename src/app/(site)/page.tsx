@@ -13,6 +13,11 @@ import {
   getSettings,
 } from "@/db/queries";
 
+// ISR: страница почти статична (данные меняются только через админку,
+// которая уже форсирует revalidatePath("/") при сохранении) — таймер тут
+// подстраховка на случай, если ревалидацию по какой-то причине не вызвали.
+export const revalidate = 60;
+
 export default async function HomePage() {
   const [categories, heroSlides, newArrivals, saleProducts, settings] = await Promise.all([
     getCategories(),

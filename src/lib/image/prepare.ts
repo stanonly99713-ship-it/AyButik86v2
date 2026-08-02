@@ -60,12 +60,18 @@ async function toBitmap(file: File): Promise<ImageBitmap> {
   return createImageBitmap(file, { imageOrientation: "from-image" });
 }
 
-/** Из одного файла делает три производных: полный размер, миниатюру и блюр-превью */
-export async function prepareImage(file: File): Promise<PreparedImage> {
+/**
+ * Из одного файла делает три производных: полный размер, миниатюру и блюр-превью.
+ * maxDimension — верхняя граница для "полного" варианта; по умолчанию 1600px
+ * (карточки товара, hero, промо), но для мелких превью (напр. кружок категории
+ * 72px на сайте) есть смысл передать значение поменьше, чтобы не гонять по сети
+ * полноразмерный WebP ради иконки.
+ */
+export async function prepareImage(file: File, maxDimension: number = FULL_MAX): Promise<PreparedImage> {
   const bitmap = await toBitmap(file);
   const { width, height } = bitmap;
 
-  const fullSize = fitSize(width, height, FULL_MAX);
+  const fullSize = fitSize(width, height, maxDimension);
   const thumbSize = fitSize(width, height, THUMB_MAX);
   const blurSize = fitSize(width, height, BLUR_MAX);
 

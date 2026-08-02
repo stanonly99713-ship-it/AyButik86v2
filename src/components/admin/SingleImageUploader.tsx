@@ -12,6 +12,8 @@ type Props = {
   onUploaded: (result: UploadedSingle) => Promise<void>;
   label?: string;
   aspectClassName?: string;
+  /** Верхняя граница стороны загружаемого фото — см. prepareImage() */
+  maxDimension?: number;
 };
 
 export function SingleImageUploader({
@@ -20,6 +22,7 @@ export function SingleImageUploader({
   onUploaded,
   label,
   aspectClassName = "aspect-video",
+  maxDimension,
 }: Props) {
   const { t } = useT();
   const resolvedLabel = label ?? t("admin.singleImageUploader.defaultLabel");
@@ -31,7 +34,7 @@ export function SingleImageUploader({
     setError(null);
     setProgress(0);
     try {
-      const prepared = await prepareImage(file);
+      const prepared = await prepareImage(file, maxDimension);
       setProgress(1);
       const seed = typeof crypto.randomUUID === "function" ? crypto.randomUUID() : Math.random().toString(36).slice(2);
       const uploaded = await uploadSingle(`${pathnamePrefix}/${seed}`, prepared.full, (pct) =>

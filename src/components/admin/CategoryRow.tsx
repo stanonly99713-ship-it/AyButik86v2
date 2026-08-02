@@ -106,6 +106,7 @@ export function CategoryRow({ id, name, imageUrl, productCount, isFirst, isLast 
               onUploaded={(r) => attachCategoryImage({ categoryId: id, ...r })}
               aspectClassName="aspect-square"
               label={t("admin.categoryRow.uploadLabel")}
+              maxDimension={320}
             />
           </div>
           <div className="min-w-0">

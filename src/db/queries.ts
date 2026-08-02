@@ -110,6 +110,8 @@ export async function getAllProducts(): Promise<Product[]> {
   const rows = await db.query.products.findMany({
     where: eq(products.isPublished, true),
     with: { images: true },
+    // safety-лимит на будущий рост каталога — сегодня товаров на порядок меньше
+    limit: 200,
   });
   return rows.map(toProduct);
 }
@@ -186,6 +188,8 @@ export async function searchProducts(filters: CatalogFilters): Promise<Product[]
     where: and(...conditions),
     with: { images: true },
     orderBy,
+    // safety-лимит на будущий рост каталога — сегодня товаров на порядок меньше
+    limit: 200,
   });
   return rows.map(toProduct);
 }
