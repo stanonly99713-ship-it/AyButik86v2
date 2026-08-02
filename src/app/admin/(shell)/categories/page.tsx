@@ -23,6 +23,7 @@ export default async function AdminCategoriesPage() {
             key={c.id}
             id={c.id}
             name={c.name}
+            imageUrl={c.imageUrl}
             productCount={c.productCount}
             isFirst={i === 0}
             isLast={i === categories.length - 1}

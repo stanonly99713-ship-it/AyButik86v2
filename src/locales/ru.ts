@@ -210,6 +210,7 @@ export const ru = {
       errorEmptyName: "Название не может быть пустым",
       errorNotEmpty: "Нельзя удалить — в категории {count} {word}. Сначала перенесите их в другую категорию.",
       productCount: "{count} {word}",
+      uploadLabel: "Фото",
     },
 
     hero: {

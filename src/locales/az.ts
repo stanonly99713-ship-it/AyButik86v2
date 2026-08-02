@@ -212,6 +212,7 @@ export const az = {
       errorEmptyName: "Ad boş ola bilməz",
       errorNotEmpty: "Silmək olmaz — kateqoriyada {count} {word} var. Əvvəlcə onları başqa kateqoriyaya köçürün.",
       productCount: "{count} {word}",
+      uploadLabel: "Şəkil",
     },
 
     hero: {

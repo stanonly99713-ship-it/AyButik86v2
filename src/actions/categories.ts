@@ -1,5 +1,6 @@
 "use server";
 
+import { del } from "@vercel/blob";
 import { asc, count, eq, ne } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
@@ -51,6 +52,20 @@ export async function renameCategory(id: string, name: string): Promise<Category
   return {};
 }
 
+export type AttachCategoryImageInput = { categoryId: string; url: string; pathname: string };
+
+export async function attachCategoryImage(input: AttachCategoryImageInput) {
+  const row = await db.query.categories.findFirst({ where: eq(categories.id, input.categoryId) });
+  if (row?.pathname) {
+    await del(row.pathname).catch(() => {});
+  }
+  await db
+    .update(categories)
+    .set({ imageUrl: input.url, pathname: input.pathname })
+    .where(eq(categories.id, input.categoryId));
+  revalidateStorefront();
+}
+
 export async function moveCategory(id: string, direction: "left" | "right") {
   const all = await db.query.categories.findMany({ orderBy: asc(categories.sortOrder) });
   const index = all.findIndex((c) => c.id === id);
@@ -68,6 +83,11 @@ export async function deleteCategory(id: string): Promise<CategoryFormState> {
   const [{ value }] = await db.select({ value: count() }).from(products).where(eq(products.categoryId, id));
   if (value > 0) {
     return { errorKey: "admin.categoryRow.errorNotEmpty", errorParams: { count: value } };
+  }
+
+  const row = await db.query.categories.findFirst({ where: eq(categories.id, id) });
+  if (row?.pathname) {
+    await del(row.pathname).catch(() => {});
   }
 
   await db.delete(categories).where(eq(categories.id, id));

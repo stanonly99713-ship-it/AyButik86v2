@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { deleteCategory, moveCategory, renameCategory } from "@/actions/categories";
+import { attachCategoryImage, deleteCategory, moveCategory, renameCategory } from "@/actions/categories";
 import { ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@/components/icons";
+import { SingleImageUploader } from "@/components/admin/SingleImageUploader";
 import { useT } from "@/locales/useTranslation";
 
 type Props = {
   id: string;
   name: string;
+  imageUrl: string | null;
   productCount: number;
   isFirst: boolean;
   isLast: boolean;
@@ -24,7 +26,7 @@ function pluralizeRu(n: number): string {
   return "товаров";
 }
 
-export function CategoryRow({ id, name, productCount, isFirst, isLast }: Props) {
+export function CategoryRow({ id, name, imageUrl, productCount, isFirst, isLast }: Props) {
   const { t, locale } = useT();
   const productWord = locale === "az" ? "məhsul" : pluralizeRu(productCount);
   const [editing, setEditing] = useState(false);
@@ -95,12 +97,23 @@ export function CategoryRow({ id, name, productCount, isFirst, isLast }: Props) 
 
   return (
     <div className="rounded-lg border border-line bg-surface p-3">
-      <div className="flex items-center justify-between">
-        <div className="min-w-0">
-          <p className="truncate text-cream">{name}</p>
-          <p className="text-xs text-muted">
-            {t("admin.categoryRow.productCount", { count: productCount, word: productWord })}
-          </p>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="w-16 shrink-0">
+            <SingleImageUploader
+              currentUrl={imageUrl}
+              pathnamePrefix={`categories/${id}`}
+              onUploaded={(r) => attachCategoryImage({ categoryId: id, ...r })}
+              aspectClassName="aspect-square"
+              label={t("admin.categoryRow.uploadLabel")}
+            />
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-cream">{name}</p>
+            <p className="text-xs text-muted">
+              {t("admin.categoryRow.productCount", { count: productCount, word: productWord })}
+            </p>
+          </div>
         </div>
         <div className="flex shrink-0 items-center gap-0.5">
           <button
