@@ -2,32 +2,40 @@
 // он используется только как фикстура для src/db/seed.ts, чтобы не держать
 // тестовые данные в двух местах.
 //
-// Фото — плейсхолдеры с picsum.photos (домен временно разрешён в
-// next.config.ts). Удалить вместе с этим файлом, когда каталог наполнится
-// настоящими товарами через админку.
+// Фото — локальные SVG-заглушки из public/images/*. Удалить вместе с этим
+// файлом, когда каталог наполнится настоящими товарами через админку.
 
 import type { Category, HeroSlide, Product, Settings } from "./types";
 
-function placeholderImage(seed: string, w: number, h: number) {
-  return `https://picsum.photos/seed/${seed}/${w}/${h}`;
+function categoryImage(seed: string) {
+  return `/images/categories/${seed}.svg`;
+}
+
+function heroImage(seed: string) {
+  return `/images/hero/${seed}.svg`;
+}
+
+function promoImage(seed: string) {
+  return `/images/promo/${seed}.svg`;
 }
 
 export const placeholderCategories: Category[] = [
-  { id: "cat-servizy", slug: "servizy", name: "Сервизы", imageUrl: placeholderImage("servizy", 200, 200), sortOrder: 0 },
-  { id: "cat-cutlery", slug: "stolovye-pribory", name: "Столовые приборы", imageUrl: placeholderImage("cutlery", 200, 200), sortOrder: 1 },
-  { id: "cat-teacup", slug: "chaynaya-para", name: "Чайная пара", imageUrl: placeholderImage("teacup", 200, 200), sortOrder: 2 },
-  { id: "cat-kitchen", slug: "kuhonnaya-posuda", name: "Кухонная посуда", imageUrl: placeholderImage("kitchen", 200, 200), sortOrder: 3 },
-  { id: "cat-accessories", slug: "aksessuary-dlya-kuhni", name: "Аксессуары для кухни", imageUrl: placeholderImage("accessories", 200, 200), sortOrder: 4 },
-  { id: "cat-textile", slug: "tekstil-i-dekor", name: "Текстиль и декор", imageUrl: placeholderImage("textile", 200, 200), sortOrder: 5 },
-  { id: "cat-glass", slug: "steklo-i-bokaly", name: "Стекло и бокалы", imageUrl: placeholderImage("glass", 200, 200), sortOrder: 6 },
-  { id: "cat-gifts", slug: "podarochnye-nabory", name: "Подарочные наборы", imageUrl: placeholderImage("gifts", 200, 200), sortOrder: 7 },
+  { id: "cat-servizy", slug: "servizy", name: "Сервизы", imageUrl: categoryImage("servizy"), sortOrder: 0 },
+  { id: "cat-cutlery", slug: "stolovye-pribory", name: "Столовые приборы", imageUrl: categoryImage("cutlery"), sortOrder: 1 },
+  { id: "cat-teacup", slug: "chaynaya-para", name: "Чайная пара", imageUrl: categoryImage("teacup"), sortOrder: 2 },
+  { id: "cat-kitchen", slug: "kuhonnaya-posuda", name: "Кухонная посуда", imageUrl: categoryImage("kitchen"), sortOrder: 3 },
+  { id: "cat-accessories", slug: "aksessuary-dlya-kuhni", name: "Аксессуары для кухни", imageUrl: categoryImage("accessories"), sortOrder: 4 },
+  { id: "cat-textile", slug: "tekstil-i-dekor", name: "Текстиль и декор", imageUrl: categoryImage("textile"), sortOrder: 5 },
+  { id: "cat-glass", slug: "steklo-i-bokaly", name: "Стекло и бокалы", imageUrl: categoryImage("glass"), sortOrder: 6 },
+  { id: "cat-gifts", slug: "podarochnye-nabory", name: "Подарочные наборы", imageUrl: categoryImage("gifts"), sortOrder: 7 },
 ];
 
 function img(seed: string, sortOrder = 0) {
+  const url = `/images/products/${seed}.svg`;
   return {
     id: `img-${seed}`,
-    url: placeholderImage(seed, 1200, 1500),
-    thumbUrl: placeholderImage(seed, 600, 750),
+    url,
+    thumbUrl: url,
     width: 1200,
     height: 1500,
     sortOrder,
@@ -258,7 +266,7 @@ export const placeholderProducts: Product[] = [
 export const placeholderHeroSlides: HeroSlide[] = [
   {
     id: "hero-1",
-    imageUrl: placeholderImage("hero-1", 1600, 1400),
+    imageUrl: heroImage("hero-1"),
     title: "Промокод на скидку -10%",
     subtitle: "На все категории товара до 20 сентября",
     buttonText: "Узнать больше",
@@ -268,7 +276,7 @@ export const placeholderHeroSlides: HeroSlide[] = [
   },
   {
     id: "hero-2",
-    imageUrl: placeholderImage("hero-2", 1600, 1400),
+    imageUrl: heroImage("hero-2"),
     title: "Новая коллекция сервизов",
     subtitle: "Эстетика вашего дома в каждой детали",
     buttonText: "Смотреть каталог",
@@ -288,5 +296,5 @@ export const placeholderSettings: Settings = {
   mapEmbedUrl: "",
   promoTitle: "Акции месяца",
   promoText: "Скидки до 30% на аксессуары для кухни до конца месяца",
-  promoImageUrl: placeholderImage("promo-banner", 1600, 900),
+  promoImageUrl: promoImage("promo-banner"),
 };
