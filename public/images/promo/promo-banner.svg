@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <rect width="1600" height="900" fill="hsl(350, 32%, 22%)"/>
+  <circle cx="800" cy="306" r="126.00000000000001" fill="hsl(350, 55%, 78%)" fill-opacity="0.18"/>
+  <text x="800" y="450" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="50" fill="hsl(350, 55%, 78%)" fill-opacity="0.92"><tspan x="800" y="450">Акции месяца</tspan></text>
+</svg>
