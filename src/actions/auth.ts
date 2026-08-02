@@ -11,7 +11,7 @@ import { createSessionToken, SESSION_COOKIE, SESSION_MAX_AGE } from "@/lib/auth"
 const LOCK_MINUTES = 15;
 const MAX_ATTEMPTS = 5;
 
-export type LoginState = { error?: string };
+export type LoginState = { errorKey?: string; errorParams?: Record<string, string | number> };
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -28,13 +28,13 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
 
   if (row?.lockedUntil && row.lockedUntil > new Date()) {
     const minutesLeft = Math.ceil((row.lockedUntil.getTime() - Date.now()) / 60000);
-    return { error: `Слишком много попыток. Попробуйте снова через ${minutesLeft} мин.` };
+    return { errorKey: "admin.login.errorLockout", errorParams: { minutes: minutesLeft } };
   }
 
-  const genericError = "Неверный логин или пароль";
+  const genericError = { errorKey: "admin.login.errorInvalidCredentials" };
 
   if (!row || row.adminLogin !== login) {
-    return { error: genericError };
+    return genericError;
   }
 
   const passwordOk = await bcrypt.compare(password, row.adminPasswordHash);
@@ -47,7 +47,7 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
         lockedUntil: failedCount >= MAX_ATTEMPTS ? new Date(Date.now() + LOCK_MINUTES * 60_000) : null,
       })
       .where(eq(settings.id, "main"));
-    return { error: genericError };
+    return genericError;
   }
 
   await db.update(settings).set({ failedLoginCount: 0, lockedUntil: null }).where(eq(settings.id, "main"));
@@ -71,7 +71,7 @@ export async function logout() {
   redirect("/admin/login");
 }
 
-export type ChangePasswordState = { error?: string; success?: boolean };
+export type ChangePasswordState = { errorKey?: string; success?: boolean };
 
 export async function changePassword(_prev: ChangePasswordState, formData: FormData): Promise<ChangePasswordState> {
   const currentPassword = String(formData.get("currentPassword") ?? "");
@@ -79,17 +79,17 @@ export async function changePassword(_prev: ChangePasswordState, formData: FormD
   const newPasswordRepeat = String(formData.get("newPasswordRepeat") ?? "");
 
   if (newPassword.length < 6) {
-    return { error: "Новый пароль должен быть не короче 6 символов" };
+    return { errorKey: "admin.password.errorTooShort" };
   }
   if (newPassword !== newPasswordRepeat) {
-    return { error: "Пароли не совпадают" };
+    return { errorKey: "admin.password.errorMismatch" };
   }
 
   const row = await db.query.settings.findFirst({ where: eq(settings.id, "main") });
-  if (!row) return { error: "Настройки не найдены" };
+  if (!row) return { errorKey: "admin.password.errorSettingsNotFound" };
 
   const ok = await bcrypt.compare(currentPassword, row.adminPasswordHash);
-  if (!ok) return { error: "Текущий пароль неверный" };
+  if (!ok) return { errorKey: "admin.password.errorWrongCurrent" };
 
   const newHash = await bcrypt.hash(newPassword, 12);
   await db.update(settings).set({ adminPasswordHash: newHash }).where(eq(settings.id, "main"));

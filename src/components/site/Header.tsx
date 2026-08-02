@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CloseIcon, MenuIcon, SearchIcon, WhatsAppIcon } from "@/components/icons";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
+import { useT } from "@/locales/useTranslation";
 import type { Category } from "@/lib/types";
 
 export function Header({ categories, whatsapp }: { categories: Category[]; whatsapp: string }) {
@@ -13,6 +15,7 @@ export function Header({ categories, whatsapp }: { categories: Category[]; whats
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const router = useRouter();
+  const { t, locale } = useT();
 
   // Блокируем прокрутку страницы, пока открыта шторка или поиск —
   // иначе фон скроллится под оверлеем на мобильном.
@@ -36,7 +39,7 @@ export function Header({ categories, whatsapp }: { categories: Category[]; whats
         <div className="mx-auto flex h-full max-w-6xl items-center justify-between px-4">
           <button
             type="button"
-            aria-label="Открыть меню"
+            aria-label={t("header.openMenu")}
             className="flex h-11 w-11 items-center justify-center text-cream"
             onClick={() => setMenuOpen(true)}
           >
@@ -47,14 +50,17 @@ export function Header({ categories, whatsapp }: { categories: Category[]; whats
             AyButik86
           </Link>
 
-          <button
-            type="button"
-            aria-label="Поиск"
-            className="flex h-11 w-11 items-center justify-center text-cream"
-            onClick={() => setSearchOpen(true)}
-          >
-            <SearchIcon className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-1.5">
+            <LanguageSwitcher />
+            <button
+              type="button"
+              aria-label={t("header.search")}
+              className="flex h-11 w-11 items-center justify-center text-cream"
+              onClick={() => setSearchOpen(true)}
+            >
+              <SearchIcon className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -67,12 +73,12 @@ export function Header({ categories, whatsapp }: { categories: Category[]; whats
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Искать товары…"
+              placeholder={t("header.searchPlaceholder")}
               className="h-full flex-1 bg-transparent text-cream placeholder:text-muted outline-none"
             />
             <button
               type="button"
-              aria-label="Закрыть поиск"
+              aria-label={t("header.closeSearch")}
               className="flex h-11 w-11 items-center justify-center text-cream"
               onClick={() => setSearchOpen(false)}
             >
@@ -80,7 +86,7 @@ export function Header({ categories, whatsapp }: { categories: Category[]; whats
             </button>
           </form>
           <div className="px-4 pt-6">
-            <p className="mb-3 text-xs uppercase tracking-wider text-muted">Категории</p>
+            <p className="mb-3 text-xs uppercase tracking-wider text-muted">{t("header.categoriesLabel")}</p>
             <ul className="flex flex-col gap-1">
               {categories.map((c) => (
                 <li key={c.id}>
@@ -106,7 +112,7 @@ export function Header({ categories, whatsapp }: { categories: Category[]; whats
               <Image src="/logo-128.webp" alt="AyButik86" width={36} height={36} className="rounded-full" />
               <button
                 type="button"
-                aria-label="Закрыть меню"
+                aria-label={t("header.closeMenu")}
                 className="flex h-11 w-11 items-center justify-center text-cream"
                 onClick={() => setMenuOpen(false)}
               >
@@ -116,7 +122,7 @@ export function Header({ categories, whatsapp }: { categories: Category[]; whats
 
             <nav className="flex flex-col px-4">
               <Link href="/catalog" onClick={() => setMenuOpen(false)} className="border-b border-line py-3 text-cream">
-                Каталог
+                {t("common.catalog")}
               </Link>
               {categories.map((c) => (
                 <Link
@@ -129,25 +135,25 @@ export function Header({ categories, whatsapp }: { categories: Category[]; whats
                 </Link>
               ))}
               <Link href="/contacts" onClick={() => setMenuOpen(false)} className="border-b border-line py-3 text-cream">
-                Контакты
+                {t("common.contacts")}
               </Link>
             </nav>
 
             <div className="mt-auto p-4">
               <a
-                href={buildWhatsAppLink(whatsapp)}
+                href={buildWhatsAppLink(whatsapp, undefined, locale)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gold to-gold-light font-medium text-ink"
               >
                 <WhatsAppIcon className="h-5 w-5" />
-                Написать в WhatsApp
+                {t("common.whatsapp")}
               </a>
             </div>
           </div>
           <button
             type="button"
-            aria-label="Закрыть меню"
+            aria-label={t("header.closeMenu")}
             className="flex-1 bg-black/60"
             onClick={() => setMenuOpen(false)}
           />

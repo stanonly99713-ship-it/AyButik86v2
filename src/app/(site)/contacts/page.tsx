@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PhoneIcon, WhatsAppIcon } from "@/components/icons";
+import { T } from "@/locales/T";
 import { getSettings } from "@/db/queries";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 
@@ -11,7 +12,9 @@ export default async function ContactsPage() {
 
   return (
     <div className="px-4 py-8">
-      <h1 className="font-heading text-2xl text-cream">Контакты</h1>
+      <h1 className="font-heading text-2xl text-cream">
+        <T k="contacts.title" />
+      </h1>
 
       <div className="mt-6 flex flex-col gap-4">
         <a href={telHref} className="flex items-center gap-3 rounded-lg border border-line px-4 py-3">
@@ -29,12 +32,16 @@ export default async function ContactsPage() {
           className="flex items-center gap-3 rounded-lg border border-line px-4 py-3"
         >
           <WhatsAppIcon className="h-5 w-5 text-gold-light" />
-          <p className="text-cream">Написать в WhatsApp</p>
+          <p className="text-cream">
+            <T k="common.whatsapp" />
+          </p>
         </a>
 
         {settings.address && (
           <div className="rounded-lg border border-line px-4 py-3">
-            <p className="text-xs uppercase tracking-wider text-muted">Адрес</p>
+            <p className="text-xs uppercase tracking-wider text-muted">
+              <T k="contacts.address" />
+            </p>
             <p className="mt-1 text-cream">{settings.address}</p>
           </div>
         )}

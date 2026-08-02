@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AddCategoryForm } from "@/components/admin/AddCategoryForm";
 import { CategoryRow } from "@/components/admin/CategoryRow";
+import { T } from "@/locales/T";
 import { getCategoriesWithProductCounts } from "@/db/queries";
 
 export const metadata: Metadata = { title: "Категории" };
@@ -10,7 +11,9 @@ export default async function AdminCategoriesPage() {
 
   return (
     <div className="px-4 py-4 pb-24">
-      <h1 className="mb-3 text-xl text-cream">Категории</h1>
+      <h1 className="mb-3 text-xl text-cream">
+        <T k="admin.categories.title" />
+      </h1>
 
       <AddCategoryForm />
 

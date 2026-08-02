@@ -1,8 +1,11 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { WhatsAppIcon } from "@/components/icons";
 import { discountPercent, formatPrice } from "@/lib/format";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
+import { useT } from "@/locales/useTranslation";
 import type { Product } from "@/lib/types";
 
 export function ProductCard({
@@ -14,6 +17,7 @@ export function ProductCard({
   categoryName?: string;
   whatsapp: string;
 }) {
+  const { t, locale } = useT();
   const cover = product.images[0];
   const discount = product.oldPrice ? discountPercent(product.oldPrice, product.price) : 0;
 
@@ -34,12 +38,12 @@ export function ProductCard({
           )}
           {discount > 0 && (
             <span className="absolute left-2 top-2 rounded bg-ink/80 px-1.5 py-0.5 text-[10px] font-medium text-gold-light">
-              Скидка -{discount}%
+              {t("product.discountBadge", { n: discount })}
             </span>
           )}
           {!product.inStock && (
             <span className="absolute inset-x-0 bottom-0 bg-ink/80 px-2 py-1 text-center text-[10px] text-muted">
-              Под заказ
+              {t("product.outOfStock")}
             </span>
           )}
         </div>
@@ -59,10 +63,10 @@ export function ProductCard({
       </Link>
 
       <a
-        href={buildWhatsAppLink(whatsapp, product)}
+        href={buildWhatsAppLink(whatsapp, product, locale)}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={`Написать в WhatsApp про товар «${product.name}»`}
+        aria-label={t("product.whatsappAria", { name: product.name })}
         className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-ink/70 text-gold-light"
       >
         <WhatsAppIcon className="h-4 w-4" />

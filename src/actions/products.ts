@@ -51,15 +51,15 @@ export async function createDraftProduct() {
   redirect(`/admin/products/${row.id}`);
 }
 
-export type ProductFormState = { error?: string };
+export type ProductFormState = { errorKey?: string };
 
 export async function updateProduct(_prev: ProductFormState, formData: FormData): Promise<ProductFormState> {
   const id = String(formData.get("id") ?? "");
   const current = await db.query.products.findFirst({ where: eq(products.id, id) });
-  if (!current) return { error: "Товар не найден" };
+  if (!current) return { errorKey: "admin.productForm.errorNotFound" };
 
   const name = String(formData.get("name") ?? "").trim();
-  if (!name) return { error: "Введите название товара" };
+  if (!name) return { errorKey: "admin.productForm.errorEmptyName" };
 
   const categoryId = String(formData.get("categoryId") ?? "");
   const priceRaw = String(formData.get("price") ?? "").replace(/\D/g, "");
@@ -68,7 +68,7 @@ export async function updateProduct(_prev: ProductFormState, formData: FormData)
   const oldPrice = oldPriceRaw ? parseInt(oldPriceRaw, 10) : null;
 
   if (oldPrice != null && oldPrice <= price) {
-    return { error: "Старая цена должна быть больше текущей — иначе это не скидка" };
+    return { errorKey: "admin.productForm.errorOldPriceInvalid" };
   }
 
   const description = String(formData.get("description") ?? "").trim();

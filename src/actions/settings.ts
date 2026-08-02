@@ -14,7 +14,7 @@ function revalidateStorefront() {
   revalidatePath("/admin/hero");
 }
 
-export type SettingsFormState = { error?: string; success?: boolean };
+export type SettingsFormState = { errorKey?: string; success?: boolean };
 
 export async function updateContacts(_prev: SettingsFormState, formData: FormData): Promise<SettingsFormState> {
   const phone = String(formData.get("phone") ?? "").trim();
@@ -26,8 +26,8 @@ export async function updateContacts(_prev: SettingsFormState, formData: FormDat
   const telegram = String(formData.get("telegram") ?? "").trim();
   const mapEmbedUrl = String(formData.get("mapEmbedUrl") ?? "").trim();
 
-  if (!phone) return { error: "Укажите телефон" };
-  if (!whatsapp) return { error: "Укажите номер для WhatsApp" };
+  if (!phone) return { errorKey: "admin.contactsForm.errorMissingPhone" };
+  if (!whatsapp) return { errorKey: "admin.contactsForm.errorMissingWhatsapp" };
 
   await db
     .update(settings)

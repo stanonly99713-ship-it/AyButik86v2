@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useT } from "@/locales/useTranslation";
 import type { Settings } from "@/lib/types";
 
 export function PromoBanner({ settings }: { settings: Settings }) {
+  const { t } = useT();
   if (!settings.promoImageUrl) return null;
 
   return (
@@ -13,7 +17,7 @@ export function PromoBanner({ settings }: { settings: Settings }) {
         <h3 className="font-script text-2xl text-gold-light">{settings.promoTitle}</h3>
         {settings.promoText && <p className="mt-2 text-sm text-cream">{settings.promoText}</p>}
         <span className="mt-4 inline-flex h-10 items-center rounded-full bg-cream px-5 text-sm font-medium text-ink">
-          К покупкам →
+          {t("promo.defaultCta")}
         </span>
       </div>
     </Link>

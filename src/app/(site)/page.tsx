@@ -4,6 +4,7 @@ import { HeroSlider } from "@/components/site/HeroSlider";
 import { ProductCard } from "@/components/site/ProductCard";
 import { PromoBanner } from "@/components/site/PromoBanner";
 import { SectionHeading } from "@/components/site/SectionHeading";
+import { T } from "@/locales/T";
 import {
   getCategories,
   getHeroSlides,
@@ -32,7 +33,9 @@ export default async function HomePage() {
       </section>
 
       <section className="px-4 py-8">
-        <SectionHeading>Новинки</SectionHeading>
+        <SectionHeading>
+          <T k="home.newArrivals" />
+        </SectionHeading>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {newArrivals.map((product) => (
             <ProductCard
@@ -45,7 +48,7 @@ export default async function HomePage() {
         </div>
         <div className="mt-6 text-center">
           <Link href="/catalog" className="text-sm text-gold-light underline underline-offset-4">
-            Перейти в каталог →
+            <T k="home.goToCatalog" />
           </Link>
         </div>
       </section>
@@ -58,7 +61,9 @@ export default async function HomePage() {
 
       {saleProducts.length > 0 && (
         <section className="px-4 py-8">
-          <SectionHeading>Скидки недели</SectionHeading>
+          <SectionHeading>
+            <T k="home.saleOfWeek" />
+          </SectionHeading>
           <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4">
             {saleProducts.map((product) => (
               <div key={product.id} className="w-[46vw] shrink-0 sm:w-56">

@@ -2,8 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createDraftProduct } from "@/actions/products";
+import { AdminProductsToolbar } from "@/components/admin/AdminProductsToolbar";
 import { ProductActionsMenu } from "@/components/admin/ProductActionsMenu";
 import { formatPrice } from "@/lib/format";
+import { T } from "@/locales/T";
 import { getAdminProducts, getCategories } from "@/db/queries";
 
 export const metadata: Metadata = { title: "Товары" };
@@ -28,43 +30,16 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
   return (
     <div>
       <div className="px-4 py-4 pb-24">
-        <h1 className="mb-3 text-xl text-cream">Товары</h1>
+        <h1 className="mb-3 text-xl text-cream">
+          <T k="admin.products.title" />
+        </h1>
 
-        <form className="mb-3 flex gap-2" action="/admin/products">
-          <input
-            type="search"
-            name="q"
-            defaultValue={params.q}
-            placeholder="Поиск по названию…"
-            className="h-11 flex-1 rounded-lg border border-line bg-surface px-3 text-cream outline-none focus:border-gold"
-          />
-          {params.cat && <input type="hidden" name="cat" value={params.cat} />}
-        </form>
-
-        <div className="no-scrollbar -mx-4 mb-4 flex gap-2 overflow-x-auto px-4">
-          <Link
-            href="/admin/products"
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-sm ${
-              !params.cat ? "border-gold bg-gold/10 text-gold-light" : "border-line text-muted"
-            }`}
-          >
-            Все
-          </Link>
-          {categories.map((c) => (
-            <Link
-              key={c.id}
-              href={`/admin/products?cat=${c.id}`}
-              className={`shrink-0 rounded-full border px-3 py-1.5 text-sm ${
-                params.cat === c.id ? "border-gold bg-gold/10 text-gold-light" : "border-line text-muted"
-              }`}
-            >
-              {c.name}
-            </Link>
-          ))}
-        </div>
+        <AdminProductsToolbar categories={categories} q={params.q} cat={params.cat} />
 
         {items.length === 0 ? (
-          <p className="mt-10 text-center text-sm text-muted">Ничего не найдено.</p>
+          <p className="mt-10 text-center text-sm text-muted">
+            <T k="admin.products.empty" />
+          </p>
         ) : (
           <ul className="flex flex-col gap-2">
             {items.map((p) => {
@@ -88,7 +63,15 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
                       <span className="mt-0.5 flex items-center gap-1 text-xs">
                         <span className={`h-1.5 w-1.5 rounded-full ${p.isPublished ? "bg-gold" : "bg-muted"}`} />
                         <span className={p.isPublished ? "text-gold-light" : "text-muted"}>
-                          {isDraft ? "Черновик" : p.isPublished ? "Опубликован" : "Скрыт"}
+                          <T
+                            k={
+                              isDraft
+                                ? "admin.products.statusDraft"
+                                : p.isPublished
+                                  ? "admin.products.statusPublished"
+                                  : "admin.products.statusHidden"
+                            }
+                          />
                         </span>
                       </span>
                     </span>

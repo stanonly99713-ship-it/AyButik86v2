@@ -2,17 +2,19 @@
 
 import { useActionState } from "react";
 import { updateContacts, type SettingsFormState } from "@/actions/settings";
+import { useT } from "@/locales/useTranslation";
 import type { Settings } from "@/lib/types";
 
 const initialState: SettingsFormState = {};
 
 export function ContactsForm({ settings }: { settings: Settings }) {
   const [state, formAction, pending] = useActionState(updateContacts, initialState);
+  const { t } = useT();
 
   return (
     <form action={formAction} className="flex flex-col gap-3">
       <label className="block text-sm text-muted">
-        Телефон
+        {t("admin.contactsForm.phoneLabel")}
         <input
           name="phone"
           type="tel"
@@ -24,7 +26,7 @@ export function ContactsForm({ settings }: { settings: Settings }) {
       </label>
 
       <label className="block text-sm text-muted">
-        WhatsApp
+        {t("admin.contactsForm.whatsappLabel")}
         <input
           name="whatsapp"
           type="tel"
@@ -34,30 +36,30 @@ export function ContactsForm({ settings }: { settings: Settings }) {
           className="mt-1 h-12 w-full rounded-lg border border-line bg-surface px-3 text-cream outline-none focus:border-gold"
         />
       </label>
-      <p className="-mt-2 text-xs text-muted">Можно вводить как угодно — лишние символы уберутся сами.</p>
+      <p className="-mt-2 text-xs text-muted">{t("admin.contactsForm.whatsappHelp")}</p>
 
       <label className="block text-sm text-muted">
-        Адрес
+        {t("admin.contactsForm.addressLabel")}
         <input
           name="address"
           defaultValue={settings.address}
-          placeholder="г. Москва, ул. Пражская, д. 4, корп. Б"
+          placeholder={t("admin.contactsForm.addressPlaceholder")}
           className="mt-1 h-12 w-full rounded-lg border border-line bg-surface px-3 text-cream outline-none focus:border-gold"
         />
       </label>
 
       <label className="block text-sm text-muted">
-        Часы работы
+        {t("admin.contactsForm.hoursLabel")}
         <input
           name="workingHours"
           defaultValue={settings.workingHours}
-          placeholder="9:00 - 21:00 (ежедневно)"
+          placeholder={t("admin.contactsForm.hoursPlaceholder")}
           className="mt-1 h-12 w-full rounded-lg border border-line bg-surface px-3 text-cream outline-none focus:border-gold"
         />
       </label>
 
       <label className="block text-sm text-muted">
-        Instagram
+        {t("admin.contactsForm.instagramLabel")}
         <input
           name="instagram"
           defaultValue={settings.instagram}
@@ -67,7 +69,7 @@ export function ContactsForm({ settings }: { settings: Settings }) {
       </label>
 
       <label className="block text-sm text-muted">
-        Telegram
+        {t("admin.contactsForm.telegramLabel")}
         <input
           name="telegram"
           defaultValue={settings.telegram}
@@ -77,7 +79,7 @@ export function ContactsForm({ settings }: { settings: Settings }) {
       </label>
 
       <label className="block text-sm text-muted">
-        Ссылка на карту (Яндекс.Карты, код для вставки)
+        {t("admin.contactsForm.mapLabel")}
         <textarea
           name="mapEmbedUrl"
           defaultValue={settings.mapEmbedUrl}
@@ -87,15 +89,15 @@ export function ContactsForm({ settings }: { settings: Settings }) {
         />
       </label>
 
-      {state.error && <p className="text-sm text-red-400">{state.error}</p>}
-      {state.success && <p className="text-sm text-gold-light">Сохранено</p>}
+      {state.errorKey && <p className="text-sm text-red-400">{t(state.errorKey)}</p>}
+      {state.success && <p className="text-sm text-gold-light">{t("common.saved")}</p>}
 
       <button
         type="submit"
         disabled={pending}
         className="mt-2 h-12 rounded-full bg-gradient-to-r from-gold to-gold-light font-medium text-ink disabled:opacity-60"
       >
-        {pending ? "Сохраняем…" : "Сохранить"}
+        {pending ? t("common.saving") : t("common.save")}
       </button>
     </form>
   );

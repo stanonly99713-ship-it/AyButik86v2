@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CatalogFilterBar } from "@/components/site/CatalogFilterBar";
 import { ProductCard } from "@/components/site/ProductCard";
+import { T } from "@/locales/T";
 import { getCategories, getSettings, searchProducts, type CatalogSort } from "@/db/queries";
 
 export const metadata: Metadata = { title: "Каталог" };
@@ -25,7 +26,13 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
     <div>
       <div className="px-4 pt-6">
         <h1 className="font-heading text-2xl text-cream">
-          {activeCategory ? activeCategory.name : params.q ? `Поиск: «${params.q}»` : "Каталог"}
+          {activeCategory ? (
+            activeCategory.name
+          ) : params.q ? (
+            <T k="catalog.searchTitle" params={{ q: params.q }} />
+          ) : (
+            <T k="catalog.title" />
+          )}
         </h1>
       </div>
 
@@ -36,7 +43,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
       <div className="px-4 py-4">
         {products.length === 0 ? (
           <p className="mt-10 text-center text-sm text-muted">
-            Ничего не нашлось. Попробуйте другой запрос или сбросьте фильтры.
+            <T k="catalog.empty" />
           </p>
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">

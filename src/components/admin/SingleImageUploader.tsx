@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { prepareImage } from "@/lib/image/prepare";
 import { uploadSingle, type UploadedSingle } from "@/lib/image/upload";
+import { useT } from "@/locales/useTranslation";
 
 type Props = {
   currentUrl?: string | null;
@@ -17,9 +18,11 @@ export function SingleImageUploader({
   currentUrl,
   pathnamePrefix,
   onUploaded,
-  label = "Загрузить фото",
+  label,
   aspectClassName = "aspect-video",
 }: Props) {
+  const { t } = useT();
+  const resolvedLabel = label ?? t("admin.singleImageUploader.defaultLabel");
   const [progress, setProgress] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -37,7 +40,7 @@ export function SingleImageUploader({
       await onUploaded(uploaded);
       setProgress(null);
     } catch {
-      setError("Не получилось загрузить фото. Проверьте интернет и попробуйте ещё раз.");
+      setError(t("admin.photoUploader.uploadError"));
       setProgress(null);
     }
   }
@@ -64,25 +67,25 @@ export function SingleImageUploader({
         {currentUrl ? (
           <Image src={currentUrl} alt="" fill className="object-cover" sizes="600px" />
         ) : (
-          <span className="absolute inset-0 flex items-center justify-center text-sm text-gold-light">{label}</span>
+          <span className="absolute inset-0 flex items-center justify-center text-sm text-gold-light">{resolvedLabel}</span>
         )}
 
         {progress !== null && (
           <span className="absolute inset-0 flex items-center justify-center bg-ink/70 text-sm text-cream">
-            {progress <= 0 ? "Обработка…" : `${progress}%`}
+            {progress <= 0 ? t("common.processing") : `${progress}%`}
           </span>
         )}
       </button>
 
       {currentUrl && progress === null && (
         <button type="button" onClick={() => inputRef.current?.click()} className="mt-1.5 text-xs text-gold-light">
-          Заменить фото
+          {t("admin.singleImageUploader.replacePhoto")}
         </button>
       )}
 
       {error && (
         <p className="mt-1.5 text-xs text-red-400">
-          {error} <button type="button" onClick={() => inputRef.current?.click()} className="underline">Повторить</button>
+          {error} <button type="button" onClick={() => inputRef.current?.click()} className="underline">{t("common.retry")}</button>
         </p>
       )}
     </div>

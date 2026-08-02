@@ -4,6 +4,7 @@ import { useActionState, useState, useTransition } from "react";
 import { attachHeroImage, deleteHeroSlide, moveHeroSlide, updateHeroSlide, type HeroFormState } from "@/actions/hero";
 import { ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@/components/icons";
 import { SingleImageUploader } from "@/components/admin/SingleImageUploader";
+import { useT } from "@/locales/useTranslation";
 
 type Slide = {
   id: string;
@@ -22,6 +23,7 @@ export function HeroSlideCard({ slide, isFirst, isLast }: { slide: Slide; isFirs
   const [state, formAction, pending] = useActionState(boundUpdate, initialState);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [moving, startTransition] = useTransition();
+  const { t } = useT();
 
   return (
     <div className="rounded-lg border border-line bg-surface p-3">
@@ -29,7 +31,7 @@ export function HeroSlideCard({ slide, isFirst, isLast }: { slide: Slide; isFirs
         currentUrl={slide.imageUrl || null}
         pathnamePrefix={`hero/${slide.id}`}
         onUploaded={(r) => attachHeroImage({ heroSlideId: slide.id, ...r })}
-        label="Загрузить фото слайда"
+        label={t("admin.heroSlideCard.uploadLabel")}
         aspectClassName="aspect-[16/9]"
       />
 
@@ -37,20 +39,20 @@ export function HeroSlideCard({ slide, isFirst, isLast }: { slide: Slide; isFirs
         <input
           name="title"
           defaultValue={slide.title}
-          placeholder="Заголовок"
+          placeholder={t("admin.heroSlideCard.titlePlaceholder")}
           className="h-11 rounded-lg border border-line bg-surface-2 px-3 text-cream outline-none focus:border-gold"
         />
         <input
           name="subtitle"
           defaultValue={slide.subtitle}
-          placeholder="Подзаголовок"
+          placeholder={t("admin.heroSlideCard.subtitlePlaceholder")}
           className="h-11 rounded-lg border border-line bg-surface-2 px-3 text-cream outline-none focus:border-gold"
         />
         <div className="flex gap-2">
           <input
             name="buttonText"
             defaultValue={slide.buttonText}
-            placeholder="Текст кнопки"
+            placeholder={t("admin.heroSlideCard.buttonTextPlaceholder")}
             className="h-11 w-1/2 rounded-lg border border-line bg-surface-2 px-3 text-cream outline-none focus:border-gold"
           />
           <input
@@ -62,18 +64,18 @@ export function HeroSlideCard({ slide, isFirst, isLast }: { slide: Slide; isFirs
         </div>
         <label className="flex h-10 items-center gap-2 text-sm text-cream">
           <input type="checkbox" name="isActive" defaultChecked={slide.isActive} className="h-5 w-5 accent-gold" />
-          Показывать на сайте
+          {t("admin.heroSlideCard.activeLabel")}
         </label>
 
         {state.error && <p className="text-xs text-red-400">{state.error}</p>}
-        {state.success && <p className="text-xs text-gold-light">Сохранено</p>}
+        {state.success && <p className="text-xs text-gold-light">{t("common.saved")}</p>}
 
         <button
           type="submit"
           disabled={pending}
           className="h-10 rounded-full bg-gradient-to-r from-gold to-gold-light text-sm font-medium text-ink disabled:opacity-60"
         >
-          Сохранить
+          {t("common.save")}
         </button>
       </form>
 
@@ -81,7 +83,7 @@ export function HeroSlideCard({ slide, isFirst, isLast }: { slide: Slide; isFirs
         <div className="flex gap-0.5">
           <button
             type="button"
-            aria-label="Переместить влево"
+            aria-label={t("admin.photoUploader.moveLeftAria")}
             disabled={moving || isFirst}
             onClick={() => startTransition(() => moveHeroSlide(slide.id, "left"))}
             className="flex h-9 w-9 items-center justify-center text-cream disabled:opacity-30"
@@ -90,7 +92,7 @@ export function HeroSlideCard({ slide, isFirst, isLast }: { slide: Slide; isFirs
           </button>
           <button
             type="button"
-            aria-label="Переместить вправо"
+            aria-label={t("admin.photoUploader.moveRightAria")}
             disabled={moving || isLast}
             onClick={() => startTransition(() => moveHeroSlide(slide.id, "right"))}
             className="flex h-9 w-9 items-center justify-center text-cream disabled:opacity-30"
@@ -105,24 +107,24 @@ export function HeroSlideCard({ slide, isFirst, isLast }: { slide: Slide; isFirs
             onClick={() => setConfirmDelete(true)}
             className="flex h-9 items-center gap-1 px-2 text-sm text-red-400"
           >
-            <TrashIcon className="h-4 w-4" /> Удалить слайд
+            <TrashIcon className="h-4 w-4" /> {t("admin.heroSlideCard.deleteSlide")}
           </button>
         ) : (
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted">Точно?</span>
+            <span className="text-xs text-muted">{t("admin.heroSlideCard.confirmQuestion")}</span>
             <button
               type="button"
               onClick={() => startTransition(() => deleteHeroSlide(slide.id))}
               className="rounded-full bg-red-500/90 px-3 py-1.5 text-xs font-medium text-white"
             >
-              Да, удалить
+              {t("common.confirmDelete")}
             </button>
             <button
               type="button"
               onClick={() => setConfirmDelete(false)}
               className="rounded-full border border-line px-3 py-1.5 text-xs text-muted"
             >
-              Отмена
+              {t("common.cancel")}
             </button>
           </div>
         )}

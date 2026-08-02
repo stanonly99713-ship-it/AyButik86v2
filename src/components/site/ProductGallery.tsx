@@ -3,9 +3,11 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { CloseIcon } from "@/components/icons";
+import { useT } from "@/locales/useTranslation";
 import type { ProductImage } from "@/lib/types";
 
 export function ProductGallery({ images, alt }: { images: ProductImage[]; alt: string }) {
+  const { t } = useT();
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [lightbox, setLightbox] = useState(false);
@@ -53,7 +55,7 @@ export function ProductGallery({ images, alt }: { images: ProductImage[]; alt: s
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink">
           <button
             type="button"
-            aria-label="Закрыть просмотр"
+            aria-label={t("product.closeGallery")}
             onClick={() => setLightbox(false)}
             className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center text-cream"
           >

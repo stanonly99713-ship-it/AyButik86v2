@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { deleteCategory, moveCategory, renameCategory } from "@/actions/categories";
 import { ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@/components/icons";
+import { useT } from "@/locales/useTranslation";
 
 type Props = {
   id: string;
@@ -12,20 +13,34 @@ type Props = {
   isLast: boolean;
 };
 
+// Азербайджанский не склоняет существительное после числительного (like
+// "3 məhsul", не "3 məhsullar") — в отличие от русского, поэтому слово
+// считается по языку интерфейса, а не зашито в словарь как готовая строка.
+function pluralizeRu(n: number): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return "товар";
+  if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return "товара";
+  return "товаров";
+}
+
 export function CategoryRow({ id, name, productCount, isFirst, isLast }: Props) {
+  const { t, locale } = useT();
+  const productWord = locale === "az" ? "məhsul" : pluralizeRu(productCount);
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(name);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [error, setError] = useState<string | undefined>();
+  const [errorKey, setErrorKey] = useState<string | undefined>();
+  const [errorParams, setErrorParams] = useState<Record<string, string | number> | undefined>();
   const [pending, startTransition] = useTransition();
 
   function save() {
     startTransition(async () => {
       const res = await renameCategory(id, value);
-      if (res.error) {
-        setError(res.error);
+      if (res.errorKey) {
+        setErrorKey(res.errorKey);
       } else {
-        setError(undefined);
+        setErrorKey(undefined);
         setEditing(false);
       }
     });
@@ -36,7 +51,10 @@ export function CategoryRow({ id, name, productCount, isFirst, isLast }: Props) 
       const res = await deleteCategory(id);
       // confirmDelete нарочно остаётся true при ошибке — иначе панель с
       // текстом ошибки схлопнется в том же рендере, и мама её не увидит.
-      if (res.error) setError(res.error);
+      if (res.errorKey) {
+        setErrorKey(res.errorKey);
+        setErrorParams({ ...res.errorParams, word: locale === "az" ? "məhsul" : pluralizeRu(Number(res.errorParams?.count ?? 0)) });
+      }
     });
   }
 
@@ -49,7 +67,7 @@ export function CategoryRow({ id, name, productCount, isFirst, isLast }: Props) 
           className="h-11 w-full rounded-lg border border-line bg-surface-2 px-3 text-cream outline-none focus:border-gold"
           autoFocus
         />
-        {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
+        {errorKey && <p className="mt-2 text-xs text-red-400">{t(errorKey)}</p>}
         <div className="mt-2 flex gap-2">
           <button
             type="button"
@@ -57,18 +75,18 @@ export function CategoryRow({ id, name, productCount, isFirst, isLast }: Props) 
             onClick={save}
             className="h-10 flex-1 rounded-full bg-gradient-to-r from-gold to-gold-light text-sm font-medium text-ink disabled:opacity-60"
           >
-            Сохранить
+            {t("common.save")}
           </button>
           <button
             type="button"
             onClick={() => {
               setValue(name);
               setEditing(false);
-              setError(undefined);
+              setErrorKey(undefined);
             }}
             className="h-10 flex-1 rounded-full border border-line text-sm text-muted"
           >
-            Отмена
+            {t("common.cancel")}
           </button>
         </div>
       </div>
@@ -81,13 +99,13 @@ export function CategoryRow({ id, name, productCount, isFirst, isLast }: Props) 
         <div className="min-w-0">
           <p className="truncate text-cream">{name}</p>
           <p className="text-xs text-muted">
-            {productCount} {pluralize(productCount)}
+            {t("admin.categoryRow.productCount", { count: productCount, word: productWord })}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-0.5">
           <button
             type="button"
-            aria-label="Переместить влево"
+            aria-label={t("admin.photoUploader.moveLeftAria")}
             disabled={pending || isFirst}
             onClick={() => startTransition(() => moveCategory(id, "left"))}
             className="flex h-9 w-9 items-center justify-center text-cream disabled:opacity-30"
@@ -96,7 +114,7 @@ export function CategoryRow({ id, name, productCount, isFirst, isLast }: Props) 
           </button>
           <button
             type="button"
-            aria-label="Переместить вправо"
+            aria-label={t("admin.photoUploader.moveRightAria")}
             disabled={pending || isLast}
             onClick={() => startTransition(() => moveCategory(id, "right"))}
             className="flex h-9 w-9 items-center justify-center text-cream disabled:opacity-30"
@@ -108,12 +126,12 @@ export function CategoryRow({ id, name, productCount, isFirst, isLast }: Props) 
             onClick={() => setEditing(true)}
             className="px-2 text-sm text-gold-light"
           >
-            Переименовать
+            {t("admin.categoryRow.rename")}
           </button>
           {!confirmDelete ? (
             <button
               type="button"
-              aria-label="Удалить категорию"
+              aria-label={t("admin.categoryRow.deleteAria")}
               onClick={() => setConfirmDelete(true)}
               className="flex h-9 w-9 items-center justify-center text-red-400"
             >
@@ -125,8 +143,8 @@ export function CategoryRow({ id, name, productCount, isFirst, isLast }: Props) 
 
       {confirmDelete && (
         <div className="mt-3 rounded-lg bg-surface-2 p-3">
-          <p className="text-sm text-cream">Удалить категорию «{name}»?</p>
-          {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
+          <p className="text-sm text-cream">{t("admin.categoryRow.confirmDeleteText", { name })}</p>
+          {errorKey && <p className="mt-1 text-xs text-red-400">{t(errorKey, errorParams)}</p>}
           <div className="mt-2 flex gap-2">
             <button
               type="button"
@@ -134,29 +152,21 @@ export function CategoryRow({ id, name, productCount, isFirst, isLast }: Props) 
               onClick={remove}
               className="h-9 flex-1 rounded-full bg-red-500/90 text-sm font-medium text-white disabled:opacity-60"
             >
-              Да, удалить
+              {t("common.confirmDelete")}
             </button>
             <button
               type="button"
               onClick={() => {
                 setConfirmDelete(false);
-                setError(undefined);
+                setErrorKey(undefined);
               }}
               className="h-9 flex-1 rounded-full border border-line text-sm text-muted"
             >
-              Отмена
+              {t("common.cancel")}
             </button>
           </div>
         </div>
       )}
     </div>
   );
-}
-
-function pluralize(n: number): string {
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return "товар";
-  if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return "товара";
-  return "товаров";
 }

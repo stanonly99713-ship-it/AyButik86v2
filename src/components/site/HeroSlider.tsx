@@ -3,9 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { useT } from "@/locales/useTranslation";
 import type { HeroSlide } from "@/lib/types";
 
 export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
+  const { t } = useT();
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
 
@@ -69,7 +71,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
             <button
               key={slide.id}
               type="button"
-              aria-label={`Слайд ${i + 1}`}
+              aria-label={t("catalog.heroSlideAria", { n: i + 1 })}
               onClick={() => goTo(i)}
               className={`h-1.5 rounded-full transition-all ${
                 i === active ? "w-5 bg-gold" : "w-1.5 bg-cream/40"

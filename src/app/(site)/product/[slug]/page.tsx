@@ -5,6 +5,7 @@ import { ProductGallery } from "@/components/site/ProductGallery";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { StickyWhatsAppButton } from "@/components/site/StickyWhatsAppButton";
 import { formatPrice, discountPercent } from "@/lib/format";
+import { T } from "@/locales/T";
 import { getAllProducts, getCategories, getProductBySlug, getRelatedProducts, getSettings } from "@/db/queries";
 
 type Params = { slug: string };
@@ -79,7 +80,7 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
               product.inStock ? "bg-gold/10 text-gold-light" : "bg-surface-2 text-muted"
             }`}
           >
-            {product.inStock ? "В наличии" : "Под заказ"}
+            <T k={product.inStock ? "product.inStock" : "product.outOfStock"} />
           </span>
         </div>
 
@@ -89,7 +90,9 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
 
         {product.specs.length > 0 && (
           <div className="mt-6">
-            <p className="mb-2 text-xs uppercase tracking-wider text-muted">Характеристики</p>
+            <p className="mb-2 text-xs uppercase tracking-wider text-muted">
+              <T k="product.specs" />
+            </p>
             <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
               {product.specs.map((spec, i) => (
                 <div key={i} className="contents">
@@ -103,7 +106,9 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
 
         {related.length > 0 && (
           <div className="mt-10">
-            <SectionHeading>Похожие товары</SectionHeading>
+            <SectionHeading>
+              <T k="product.related" />
+            </SectionHeading>
             <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4">
               {related.map((p) => (
                 <div key={p.id} className="w-[46vw] shrink-0 sm:w-56">

@@ -6,6 +6,7 @@ import { attachImage, moveImage, removeImage, setCoverImage } from "@/actions/im
 import { ChevronLeftIcon, ChevronRightIcon, StarIcon, TrashIcon } from "@/components/icons";
 import { prepareImage } from "@/lib/image/prepare";
 import { uploadPreparedPair } from "@/lib/image/upload";
+import { useT } from "@/locales/useTranslation";
 import type { ProductImage } from "@/lib/types";
 
 type UploadingItem = {
@@ -23,6 +24,7 @@ function randomSeed() {
 }
 
 export function PhotoUploader({ productId, images }: { productId: string; images: ProductImage[] }) {
+  const { t } = useT();
   const [uploading, setUploading] = useState<UploadingItem[]>([]);
   const [pending, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -57,7 +59,7 @@ export function PhotoUploader({ productId, images }: { productId: string; images
     } catch {
       updateItem(item.id, {
         progress: -1,
-        error: "Не получилось загрузить фото. Проверьте интернет и попробуйте ещё раз.",
+        error: t("admin.photoUploader.uploadError"),
       });
     } finally {
       activeRef.current -= 1;
@@ -109,7 +111,7 @@ export function PhotoUploader({ productId, images }: { productId: string; images
         onClick={() => inputRef.current?.click()}
         className="flex h-12 w-full items-center justify-center rounded-lg border border-dashed border-gold/60 text-sm text-gold-light"
       >
-        + Добавить фото
+        {t("admin.photoUploader.addPhoto")}
       </button>
 
       {(images.length > 0 || uploading.length > 0) && (
@@ -121,13 +123,13 @@ export function PhotoUploader({ productId, images }: { productId: string; images
               </div>
               {i === 0 && (
                 <span className="absolute left-1 top-1 rounded bg-ink/80 px-1.5 py-0.5 text-[9px] text-gold-light">
-                  Главное фото
+                  {t("admin.photoUploader.coverBadge")}
                 </span>
               )}
               <div className="mt-1 flex items-center justify-center gap-0.5">
                 <button
                   type="button"
-                  aria-label="Переместить влево"
+                  aria-label={t("admin.photoUploader.moveLeftAria")}
                   disabled={pending || i === 0}
                   onClick={() => startTransition(() => moveImage(img.id, "left"))}
                   className="flex h-8 w-8 items-center justify-center text-cream disabled:opacity-30"
@@ -136,7 +138,7 @@ export function PhotoUploader({ productId, images }: { productId: string; images
                 </button>
                 <button
                   type="button"
-                  aria-label="Сделать главным"
+                  aria-label={t("admin.photoUploader.setCoverAria")}
                   disabled={pending || i === 0}
                   onClick={() => startTransition(() => setCoverImage(img.id))}
                   className="flex h-8 w-8 items-center justify-center text-gold-light disabled:opacity-30"
@@ -145,7 +147,7 @@ export function PhotoUploader({ productId, images }: { productId: string; images
                 </button>
                 <button
                   type="button"
-                  aria-label="Переместить вправо"
+                  aria-label={t("admin.photoUploader.moveRightAria")}
                   disabled={pending || i === images.length - 1}
                   onClick={() => startTransition(() => moveImage(img.id, "right"))}
                   className="flex h-8 w-8 items-center justify-center text-cream disabled:opacity-30"
@@ -154,7 +156,7 @@ export function PhotoUploader({ productId, images }: { productId: string; images
                 </button>
                 <button
                   type="button"
-                  aria-label="Удалить фото"
+                  aria-label={t("admin.photoUploader.removeAria")}
                   disabled={pending}
                   onClick={() => startTransition(() => removeImage(img.id))}
                   className="flex h-8 w-8 items-center justify-center text-red-400 disabled:opacity-30"
@@ -176,12 +178,14 @@ export function PhotoUploader({ productId, images }: { productId: string; images
                       onClick={() => retry(item)}
                       className="mt-2 rounded-full border border-gold px-2 py-1 text-[10px] text-gold-light"
                     >
-                      Повторить
+                      {t("common.retry")}
                     </button>
                   </>
                 ) : (
                   <>
-                    <span className="text-xs text-muted">{item.progress <= 0 ? "Обработка…" : `${item.progress}%`}</span>
+                    <span className="text-xs text-muted">
+                      {item.progress <= 0 ? t("common.processing") : `${item.progress}%`}
+                    </span>
                     <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-surface">
                       <div
                         className="h-full bg-gold transition-all"

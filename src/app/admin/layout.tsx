@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { fontVariables } from "@/lib/fonts";
+import { LocaleProvider } from "@/locales/LocaleProvider";
 import "../globals.css";
 
 // Отдельный root layout для /admin — без хедера/футера витрины (Header/Footer
@@ -27,7 +28,11 @@ export const viewport: Viewport = {
 export default function AdminRootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ru" className={`${fontVariables} h-full antialiased`}>
-      <body className="min-h-full bg-ink text-cream">{children}</body>
+      <body className="min-h-full bg-ink text-cream">
+        <LocaleProvider storageKey="ayb-locale-admin" defaultLocale="az">
+          {children}
+        </LocaleProvider>
+      </body>
     </html>
   );
 }

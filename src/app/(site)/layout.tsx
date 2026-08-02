@@ -3,6 +3,7 @@ import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { YandexMetrika } from "@/components/site/YandexMetrika";
 import { fontVariables } from "@/lib/fonts";
+import { LocaleProvider } from "@/locales/LocaleProvider";
 import { getCategories, getSettings } from "@/db/queries";
 import "../globals.css";
 
@@ -33,9 +34,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html lang="ru" className={`${fontVariables} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-ink text-cream">
-        <Header categories={categories} whatsapp={settings.whatsapp} />
-        <main className="flex-1">{children}</main>
-        <Footer settings={settings} />
+        <LocaleProvider storageKey="ayb-locale-site" defaultLocale="ru">
+          <Header categories={categories} whatsapp={settings.whatsapp} />
+          <main className="flex-1">{children}</main>
+          <Footer settings={settings} />
+        </LocaleProvider>
         <YandexMetrika />
       </body>
     </html>

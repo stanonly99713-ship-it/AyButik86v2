@@ -26,11 +26,11 @@ function revalidateStorefront() {
   revalidatePath("/admin/categories");
 }
 
-export type CategoryFormState = { error?: string };
+export type CategoryFormState = { errorKey?: string; errorParams?: Record<string, string | number> };
 
 export async function createCategory(_prev: CategoryFormState, formData: FormData): Promise<CategoryFormState> {
   const name = String(formData.get("name") ?? "").trim();
-  if (!name) return { error: "Введите название категории" };
+  if (!name) return { errorKey: "admin.categoryForm.errorEmptyName" };
 
   const existing = await db.query.categories.findMany({ orderBy: asc(categories.sortOrder) });
   const nextSortOrder = existing.length > 0 ? existing[existing.length - 1].sortOrder + 1 : 0;
@@ -44,7 +44,7 @@ export async function createCategory(_prev: CategoryFormState, formData: FormDat
 
 export async function renameCategory(id: string, name: string): Promise<CategoryFormState> {
   const trimmed = name.trim();
-  if (!trimmed) return { error: "Название не может быть пустым" };
+  if (!trimmed) return { errorKey: "admin.categoryRow.errorEmptyName" };
 
   await db.update(categories).set({ name: trimmed }).where(eq(categories.id, id));
   revalidateStorefront();
@@ -67,18 +67,10 @@ export async function moveCategory(id: string, direction: "left" | "right") {
 export async function deleteCategory(id: string): Promise<CategoryFormState> {
   const [{ value }] = await db.select({ value: count() }).from(products).where(eq(products.categoryId, id));
   if (value > 0) {
-    return { error: `Нельзя удалить — в категории ${value} ${pluralizeProducts(value)}. Сначала перенесите их в другую категорию.` };
+    return { errorKey: "admin.categoryRow.errorNotEmpty", errorParams: { count: value } };
   }
 
   await db.delete(categories).where(eq(categories.id, id));
   revalidateStorefront();
   return {};
-}
-
-function pluralizeProducts(n: number): string {
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return "товар";
-  if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return "товара";
-  return "товаров";
 }
