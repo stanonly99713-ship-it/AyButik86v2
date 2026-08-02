@@ -12,7 +12,7 @@ export function Footer({ settings }: { settings: Settings }) {
       <div className="mx-auto max-w-6xl px-4 py-10">
         <div className="flex flex-col items-start gap-6 sm:flex-row sm:justify-between">
           <div>
-            <Image src="/AyButik86_logo.png" alt="AyButik86" width={44} height={44} className="rounded-full" />
+            <Image src="/logo-128.webp" alt="AyButik86" width={44} height={44} className="rounded-full" />
             <p className="mt-3 font-heading italic text-lg gold-gradient-text">AyButik86</p>
             <p className="text-xs uppercase tracking-wider text-muted">Эстетика вашего дома</p>
           </div>

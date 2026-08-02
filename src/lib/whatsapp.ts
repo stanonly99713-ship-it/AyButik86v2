@@ -1,7 +1,7 @@
 import type { Product } from "./types";
 import { formatPrice } from "./format";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aybutik86.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ay-butik86v2.vercel.app";
 
 /**
  * Ссылка wa.me с уже готовым текстом сообщения. Номер в `whatsapp` должен

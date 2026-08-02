@@ -103,7 +103,7 @@ export function Header({ categories, whatsapp }: { categories: Category[]; whats
         <div className="fixed inset-0 z-50 flex">
           <div className="flex w-[85%] max-w-sm flex-col overflow-y-auto bg-surface pb-[env(safe-area-inset-bottom)]">
             <div className="flex items-center justify-between px-4 py-3">
-              <Image src="/AyButik86_logo.png" alt="AyButik86" width={36} height={36} className="rounded-full" />
+              <Image src="/logo-128.webp" alt="AyButik86" width={36} height={36} className="rounded-full" />
               <button
                 type="button"
                 aria-label="Закрыть меню"

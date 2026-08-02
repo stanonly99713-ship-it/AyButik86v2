@@ -38,8 +38,28 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
   const category = categories.find((c) => c.id === product.categoryId);
   const discount = product.oldPrice ? discountPercent(product.oldPrice, product.price) : 0;
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ay-butik86v2.vercel.app";
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description || undefined,
+    image: product.images.map((img) => img.url),
+    category: category?.name,
+    offers: {
+      "@type": "Offer",
+      url: `${siteUrl}/product/${product.slug}`,
+      priceCurrency: "RUB",
+      price: product.price,
+      availability: product.inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/PreOrder",
+    },
+  };
+
   return (
     <div className="flex flex-col">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <ProductGallery images={product.images} alt={product.name} />
 
       <div className="px-4 pb-8 pt-4">

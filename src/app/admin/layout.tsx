@@ -10,6 +10,11 @@ import "../globals.css";
 export const metadata: Metadata = {
   title: { default: "Админка · AyButik86", template: "%s · Админка AyButik86" },
   robots: { index: false, follow: false },
+  // manifest.ts живёт в корне app/ (иначе Next его не подхватывает) и
+  // описывает именно админку — со витрины на него нарочно нет ссылки.
+  manifest: "/manifest.webmanifest",
+  icons: { apple: "/logo-192.png" },
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "AyButik86 Админ" },
 };
 
 export const viewport: Viewport = {

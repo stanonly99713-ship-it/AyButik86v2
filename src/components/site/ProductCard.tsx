@@ -28,6 +28,8 @@ export function ProductCard({
               fill
               className="object-cover"
               sizes="(max-width: 640px) 50vw, 25vw"
+              placeholder={cover.blurData ? "blur" : undefined}
+              blurDataURL={cover.blurData ?? undefined}
             />
           )}
           {discount > 0 && (

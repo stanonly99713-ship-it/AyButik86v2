@@ -53,7 +53,7 @@ function LoginForm() {
 export default function AdminLoginPage() {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center px-6">
-      <Image src="/AyButik86_logo.png" alt="AyButik86" width={64} height={64} className="mb-4 rounded-full" />
+      <Image src="/logo-128.webp" alt="AyButik86" width={64} height={64} className="mb-4 rounded-full" />
       <h1 className="mb-6 font-heading text-xl text-cream">Вход в админку</h1>
       <Suspense fallback={null}>
         <LoginForm />
