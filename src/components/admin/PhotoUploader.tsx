@@ -56,7 +56,8 @@ export function PhotoUploader({ productId, images }: { productId: string; images
       });
 
       setUploading((prev) => prev.filter((i) => i.id !== item.id));
-    } catch {
+    } catch (err) {
+      console.error("PhotoUploader upload failed:", err);
       updateItem(item.id, {
         progress: -1,
         error: t("admin.photoUploader.uploadError"),

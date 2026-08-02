@@ -39,7 +39,8 @@ export function SingleImageUploader({
       );
       await onUploaded(uploaded);
       setProgress(null);
-    } catch {
+    } catch (err) {
+      console.error("SingleImageUploader upload failed:", err);
       setError(t("admin.photoUploader.uploadError"));
       setProgress(null);
     }
